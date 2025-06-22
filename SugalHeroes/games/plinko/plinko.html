@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Plinko | SUGALHEROES</title>
+    <link rel="stylesheet" href="plinko.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <script>
+        // Adjust this if your API folder name is different or hosted elsewhere
+        window.API_BASE_URL = 'http://localhost/sugalhero-api'; 
+    </script>
+
+    <header class="header">
+        <div class="left">
+            <a href="../../homepage/index.php" class="home-button">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+        
+        <div class="right-header-actions">
+            <div class="crypto-wallet-display">
+                <span id="sugalCoinBalance">0 SGC</span> 
+            </div>
+            <div class="user-account-dropdown">
+                <button class="dropdown-toggle" id="userDropdownToggle">
+                    <i class="fas fa-user-circle"></i> <span id="headerUsername">Username</span>
+                </button>
+                <div class="dropdown-menu" id="myDropdown">
+                    <div class="account-balance" id="userBalanceDisplay">Balance: $0.00</div>
+                    <button class="top-up-button" id="topUpBtn">Top Up</button>
+                    <button class="logout-button" id="logoutBtn">Log Out</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="left-panel">
+            <h2>🎰 Plinko</h2>
+
+            <div class="user-info">
+                Welcome, <span id="gameUsername">Guest</span>!
+                <p>Fiat Balance: $<span id="gameFiatBalance">0.00</span></p>
+                <p>SGC Balance: <span id="gameSGCBalance">0.000000000000000000</span> SGC</p>
+                <p id="metamaskStatus" style="font-size: 0.8em; margin-top: 5px; cursor: pointer;">MetaMask: Not Connected</p>
+            </div>
+
+            <label>Bet Amount</label>
+            <input type="number" id="betAmount" min="1" value="10">
+
+            <label>Currency</label>
+            <select id="betCurrency">
+                <option value="fiat">Fiat ($)</option>
+                <option value="token">SugalCoin (SGC)</option>
+            </select>
+
+            <label>Risk Level</label>
+            <select id="riskLevel">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+
+            <button id="dropBallBtn">Drop Ball</button> 
+            <div id="result"></div>
+        </div>
+
+        <div class="game-area">
+            <canvas id="plinkoCanvas"></canvas>
+            <div id="multipliers"></div>
+        </div>
+
+        
+    </div>
+
+    <section class="plinko-description">
+        <h3>DESCRIPTION</h3>
+        <p>
+            Plinko is a thrilling game of chance where a ball falls through pegs and lands in a multiplier slot. The slot you land on determines your reward. Adjust your bet and risk level to aim for the highest payout!
+        </p>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <script src="../../homepage/crypto-wallet.js"></script> 
+    <script src="matter.min.js"></script>
+    <script src="plinko.js"></script> 
+
+    <script>
+        // PLINKO_PLAY_API is now defined in plinko.js and accessed through its scope.
+        // No need to define it again here.
+
+        // --- DOM Elements ---
+        const gameUsernameSpan = document.getElementById('gameUsername');
+        const gameFiatBalanceSpan = document.getElementById('gameFiatBalance');
+        const gameSGCBalanceSpan = document.getElementById('gameSGCBalance');
+        const betAmountInput = document.getElementById('betAmount');
+        const betCurrencySelect = document.getElementById('betCurrency');
+        const dropBallBtn = document.getElementById('dropBallBtn');
+        const resultDiv = document.getElementById('result');
+        const metamaskStatusSpan = document.getElementById('metamaskStatus');
+        
+
+        // Global variable for user's JSON Web Token (JWT)
+        let currentUserToken = null; 
+        // Note: currentAccount, web3, sugalCoinContract, formatAddress, connectWallet, fetchTokenBalance,
+        // SUGALCOIN_DECIMALS, SUGALCOIN_SYMBOL, SUGALCOIN_CONTRACT_ADDRESS, SUGALCOIN_ABI are all
+        // made globally available by crypto-wallet.js which loads before this script.
+
+        // --- Helper function to update all balance displays on the page ---
+        // This fetches from your backend API (user_profile.php) and updates UI
+        async function updateAllBalancesDisplay() {
+            if (!currentUserToken) {
+                console.error("No JWT token found. Cannot fetch balances.");
+                return;
+            }
+            try {
+                // Fetch user profile which contains token_balance and currency_balance
+                const response = await fetch(`${window.API_BASE_URL}/user_profile.php`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${currentUserToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success && data.user) {
+                    // Update internal Fiat balance display (now uses 'currency_balance')
+                    gameFiatBalanceSpan.textContent = parseFloat(data.user.currency_balance).toFixed(2); 
+                    // Update internal SGC balance display (full precision)
+                    gameSGCBalanceSpan.textContent = parseFloat(data.user.token_balance).toFixed(18); 
+                    
+                    // Update header username for consistency across pages
+                    const headerUsernameSpan = document.getElementById('headerUsername');
+                    if (headerUsernameSpan) {
+                        headerUsernameSpan.textContent = data.user.username;
+                    }
+                    // Update header userBalanceDisplay (should reflect fiat balance from user_profile)
+                    const userBalanceDisplayDiv = document.getElementById('userBalanceDisplay');
+                    if (userBalanceDisplayDiv) {
+                        userBalanceDisplayDiv.textContent = `Balance: $${parseFloat(data.user.currency_balance).toFixed(2)}`; 
+                    }
+
+                } else {
+                    console.error('Failed to update balance display from API:', data.message || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Network error fetching balances:', error);
+            }
+        }
+
+        // --- Helper function to display messages to the user ---
+        function displayGameMessage(message, type = 'info') {
+            if (resultDiv) {
+                resultDiv.textContent = message;
+                resultDiv.style.color = {
+                    'info': 'white',
+                    'success': '#00B140', // NVIDIA green
+                    'error': 'red',
+                    'warning': 'orange'
+                }[type] || 'white';
+            }
+        }
+
+        // --- Handle Currency Selection Change ---
+        betCurrencySelect.addEventListener('change', () => {
+            const selectedCurrency = betCurrencySelect.value;
+            if (selectedCurrency === 'token') {
+                // Warn if MetaMask is not connected when SGC is selected
+                if (typeof currentAccount === 'undefined' || !currentAccount) { 
+                    displayGameMessage("MetaMask wallet must be connected to bet with SGC (and enable mining).", 'warning');
+                }
+                // Adjust input field attributes for SGC (small minimum, high precision, default value)
+                betAmountInput.min = "0.000000000000000001";
+                betAmountInput.step = "0.000000000000000001";
+                betAmountInput.value = "0.01"; // Default to 0.01 SGC ($1.00 USD equivalent)
+            } else { // Fiat selected
+                displayGameMessage("", 'info'); // Clear any previous warning
+                // Adjust input field attributes for Fiat
+                betAmountInput.min = "1";
+                betAmountInput.step = "1";
+                betAmountInput.value = "10"; // Default fiat amount
+            }
+        });
+
+        
+
+        // --- User Account Dropdown and Logout Logic (Copied from dashboard/homepage for consistency) ---
+        const userDropdownToggle = document.getElementById('userDropdownToggle');
+        const myDropdown = document.getElementById('myDropdown');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const topUpBtn = document.getElementById('topUpBtn'); 
+
+        if (userDropdownToggle && myDropdown) {
+            userDropdownToggle.addEventListener('click', () => {
+                myDropdown.classList.toggle('show');
+            });
+            window.onclick = function(event) {
+                // Close the dropdown if click is outside of it
+                if (!event.target.matches('.dropdown-toggle') && !event.target.closest('.dropdown-toggle')) {
+                    if (myDropdown.classList.contains('show')) {
+                        myDropdown.classList.remove('show');
+                    }
+                }
+            };
+        }
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('jwt_token');
+                localStorage.removeItem('user_id');
+                localStorage.removeItem('username');
+                window.location.href = '../../authentication/login.php'; // Redirect to login after logout
+            });
+        }
+        // If topUpBtn is meant to open a modal on this page, its logic needs to be here.
+        // For now, it's just a button in the header dropdown with no specific action defined here.
+
+        // --- Initial Load & Authentication Check ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            const jwtToken = localStorage.getItem('jwt_token');
+            const username = localStorage.getItem('username');
+            const userId = localStorage.getItem('user_id');
+
+            // If no JWT or user data, redirect to login
+            if (!jwtToken || !username || !userId) {
+                console.log('No JWT token found. Redirecting to login...');
+                window.location.href = '../../authentication/login.php';
+                return;
+            }
+
+            // Store JWT globally for API calls
+            currentUserToken = jwtToken;
+            // Display username in game UI
+            gameUsernameSpan.textContent = username;
+            
+            // Update header username and fiat balance display (if any)
+            const headerUsernameSpan = document.getElementById('headerUsername');
+            if (headerUsernameSpan) {
+                headerUsernameSpan.textContent = username;
+            }
+            const userBalanceDisplayDiv = document.getElementById('userBalanceDisplay');
+            if (userBalanceDisplayDiv) {
+                userBalanceDisplayDiv.textContent = `Balance: $0.00`; // Default or fetch actual fiat if needed
+            }
+
+            // Initial call to fetch and update all balances (Fiat and SGC)
+            await updateAllBalancesDisplay();
+
+            // Check MetaMask status and update UI for mining feature availability
+            // 'currentAccount' is provided by crypto-wallet.js which loads first.
+            if (typeof currentAccount !== 'undefined' && currentAccount) {
+                metamaskStatusSpan.textContent = `MetaMask: Connected (${formatAddress(currentAccount)})`;
+                metamaskStatusSpan.style.color = '#00B140'; // Green color for connected status
+                metamaskStatusSpan.style.cursor = 'default'; // No click needed if connected
+                metamaskStatusSpan.onclick = null; // Remove click handler
+            } else {
+                metamaskStatusSpan.textContent = `MetaMask: Not Connected. Mining disabled.`;
+                metamaskStatusSpan.style.color = 'orange'; // Warning color for disconnected
+                metamaskStatusSpan.style.cursor = 'pointer'; // Make it clickable to connect
+                metamaskStatusSpan.onclick = async () => {
+                    if (typeof connectWallet === 'function') { // Check if connectWallet is available from crypto-wallet.js
+                        await connectWallet(false); // Attempt to connect
+                        if (currentAccount) { // If connection was successful
+                            metamaskStatusSpan.textContent = `MetaMask: Connected (${formatAddress(currentAccount)})`;
+                            metamaskStatusSpan.style.color = '#00B140';
+                            metamaskStatusSpan.style.cursor = 'default';
+                            metamaskStatusSpan.onclick = null; // Remove handler once connected
+                            updateAllBalancesDisplay(); // Refresh balances after successful connection
+                        } else {
+                            // If connection failed (e.g., user rejected)
+                            metamaskStatusSpan.textContent = `MetaMask: Connection failed.`;
+                            metamaskStatusSpan.style.color = 'red';
+                        }
+                    } else {
+                        // If crypto-wallet.js (and thus connectWallet) failed to load
+                        metamaskStatusSpan.textContent = `MetaMask: Not Installed.`;
+                        metamaskStatusSpan.style.color = 'red';
+                        metamaskStatusSpan.onclick = () => window.open('https://metamask.io/download/', '_blank'); // Link to MetaMask download
+                    }
+                };
+            }
+            
+            // Event listeners from crypto-wallet.js for account/chain changes
+            // These will automatically update UI based on MetaMask state changes
+            if (window.ethereum) { // Ensure window.ethereum exists before adding listeners
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    // Update connection status based on new accounts state
+                    if (accounts.length > 0 && typeof currentAccount !== 'undefined' && currentAccount) {
+                        metamaskStatusSpan.textContent = `MetaMask: Connected (${formatAddress(currentAccount)})`;
+                        metamaskStatusSpan.style.color = '#00B140';
+                        metamaskStatusSpan.style.cursor = 'default';
+                        metamaskStatusSpan.onclick = null;
+                    } else {
+                        metamaskStatusSpan.textContent = `MetaMask: Disconnected. Mining disabled.`;
+                        metamaskStatusSpan.style.color = 'orange';
+                        metamaskStatusSpan.style.cursor = 'pointer';
+                        metamaskStatusSpan.onclick = async () => { if (typeof connectWallet === 'function') { await connectWallet(false); } };
+                    }
+                    updateAllBalancesDisplay(); // Refresh balances whenever account changes
+                });
+                window.ethereum.on('chainChanged', (chainId) => {
+                    const sepoliaChainId = 11155111;
+                    const currentChainIdNum = web3.utils.hexToNumber(chainId);
+                    // Update status if network is wrong or correct
+                    if (currentChainIdNum !== sepoliaChainId) {
+                        metamaskStatusSpan.textContent = `MetaMask: Wrong Network! Switch to Sepolia.`;
+                        metamaskStatusSpan.style.color = 'red';
+                        metamaskStatusSpan.style.cursor = 'pointer';
+                        metamaskStatusSpan.onclick = async () => {
+                            try {
+                                await window.ethereum.request({
+                                    method: 'wallet_switchEthereumChain',
+                                    params: [{ chainId: web3.utils.numberToHex(sepoliaChainId) }],
+                                });
+                            } catch (e) { console.error("Switch network failed", e); }
+                        };
+                    } else {
+                        // Correct network, now check account connection
+                        if (currentAccount) {
+                            metamaskStatusSpan.textContent = `MetaMask: Connected (${formatAddress(currentAccount)})`;
+                            metamaskStatusSpan.style.color = '#00B140';
+                            metamaskStatusSpan.style.cursor = 'default';
+                            metamaskStatusSpan.onclick = null;
+                        } else {
+                            metamaskStatusSpan.textContent = `MetaMask: Disconnected. Mining disabled.`;
+                            metamaskStatusSpan.style.color = 'orange';
+                            metamaskStatusSpan.style.cursor = 'pointer';
+                            metamaskStatusSpan.onclick = async () => { if (typeof connectWallet === 'function') { await connectWallet(false); } };
+                        }
+                    }
+                    updateAllBalancesDisplay(); // Refresh balances whenever chain changes
+                });
+            }
+        });
+    </script>
+</body>
+</html>

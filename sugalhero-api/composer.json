@@ -1,0 +1,14 @@
+{
+    "name": "sugalheroes/api",
+    "description": "API for SugalHeroes e-casino website project, BSCpE-102C, A.Y 2024-2025",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Group3BSCpE102C"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^6.11"
+    }
+}

@@ -1,0 +1,421 @@
+/* homepage/style.css - Consolidated and Debugged */
+
+/* General Styling & Font Imports (from dashboard.css) */
+/* Ensure both Roboto and Orbitron are linked. Orbitron is used for headings. */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&display=swap');
+
+:root {
+    /* Color Palette - Inspired by NVIDIA Dark Theme & Stake */
+    --bg-dark: #1a1a1a;
+    --bg-medium: #222222;
+    --bg-light: #2c2c2c;
+    --text-color: #e0e0e0;
+    --accent-green: #76b900; /* NVIDIA Green */
+    --accent-blue: #007bff; /* A nice blue for interaction */
+    --border-color: #3a3a3a;
+    --hover-bg: #3a3a3a;
+    --win-color: #38b000; /* Darker green for wins */
+    --loss-color: #d12222; /* Red for losses */
+    --button-gradient-start: #333;
+    --button-gradient-end: #111;
+    --font-heading: 'Orbitron', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+}
+
+/* Global Reset (from dashboard.css) */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Body Styling (from dashboard.css) */
+body {
+    margin: 0;
+    font-family: var(--font-body); /* Using Roboto */
+    background-color: var(--bg-dark); /* Dark background */
+    color: var(--text-color); /* Light grey text */
+    overflow: hidden; /* Prevent scrollbars unless needed by specific elements */
+    height: 100vh; /* Ensure full viewport height for flex layout */
+    display: flex; /* Make body a flex container */
+    flex-direction: column; /* Stack vertically if content wraps */
+}
+
+/* Wrapper / Dashboard Container Layout (Adapting dashboard.css .dashboard-container) */
+.wrapper {
+    display: flex;
+    height: 100%; /* Take full height of body */
+    width: 100vw; /* Take full viewport width */
+}
+
+/* Menu / Sidebar Styling (Adapting dashboard.css .sidebar) */
+.menu { /* This was 'aside' with class 'menu' in index.php */
+    position: relative;
+    width: 70px; /* Original width, dashboard sidebar was 250px. Keeping 70px for compact menu */
+    background-color: var(--bg-medium);
+    padding: 20px 0;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10; /* Ensure it stays above main content if needed */
+    /* Keeping original menu styling which is compact, not wide sidebar */
+}
+
+.indicator { /* Existing menu indicator */
+    position: absolute;
+    left: 0;
+    width: 3px;
+    height: 71px; /* Adjust height as needed if menu item height changes */
+    background-color: var(--accent-green);
+    transition: top 0.3s ease;
+    border-radius: 0 4px 4px 0;
+    pointer-events: none;
+    z-index: 10;
+    top: 0;
+}
+
+.brand { /* Existing menu brand */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.brand img { /* Existing menu brand image */
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+}
+
+.links { /* Adapting dashboard.css .main-nav ul/li/a to .links a */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.links a { /* Adapting dashboard.css .nav-item */
+    color: var(--text-color); /* Use dashboard's text color */
+    padding: 15px 0; /* Adjust padding for menu items */
+    width: 100%;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.9em; /* Smaller font for compact menu */
+    transition: background-color 0.3s ease, color 0.3s ease, border-left 0.3s ease;
+    border-left: 5px solid transparent; /* Match dashboard active indicator */
+}
+
+.links a i { /* Font Awesome icons within menu links */
+    font-size: 1.5em; /* Larger icons */
+    margin-bottom: 5px;
+    color: var(--accent-green); /* Icons get the accent color */
+}
+
+.links a:hover,
+.links a.active {
+    background-color: var(--hover-bg);
+    color: var(--accent-green);
+    border-left: 5px solid var(--accent-green);
+}
+
+.links a.active i {
+    color: var(--text-color); /* Active icon turns white for contrast */
+}
+
+.label { /* Existing label */
+    font-size: 0.75em; /* Smaller label font */
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Main Content Area (Adapting dashboard.css .main-content) */
+.content { /* This was 'main' with class 'content' in index.php */
+    flex-grow: 1;
+    display: flex; /* Make content a flex container */
+    flex-direction: column; /* Stack sections vertically */
+    background-color: var(--bg-dark);
+    padding: 20px 30px; /* Adjust padding as per dashboard */
+    overflow-y: auto; /* Enable scrolling for the main content */
+    max-width: 1200px; /* Example: Max width for the main content area */
+    margin: 0 auto; /* Center the content area */
+}
+
+/* Header / Topbar Styling (Adapting dashboard.css .header) */
+.topbar { /* This was 'header' with class 'topbar' in index.php */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    background-color: var(--bg-dark); /* Ensure background is dark */
+    position: sticky; /* Keep it sticky */
+    top: 0;
+    z-index: 900;
+}
+
+/* Home button (Adapting dashboard.css .home-button) */
+.home-button { /* This was 'a' with class 'nav-link' */
+    background: linear-gradient(to right, var(--button-gradient-start), var(--button-gradient-end));
+    color: var(--text-color);
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.home-button i {
+    margin-right: 8px;
+    color: var(--accent-green);
+}
+
+.home-button:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-green);
+}
+
+/* Hero Section - Consolidated & Corrected Styles */
+.dashboard-widget.hero {
+    background-color: var(--bg-dark); /* Overall dark background for the widget */
+    color: var(--text-color);
+    padding: 0; /* No direct padding here, handled by .hero-content-wrapper */
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden; /* Ensure content doesn't spill out */
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 95%; /* Keep it responsive and slightly narrower than full width */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Wrapper for header and slideshow to control their joint layout and provide consistent padding */
+.hero-content-wrapper {
+    width: 100%; /* Take full width of its parent */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; /* Consistent padding around the header box and slideshow */
+    box-sizing: border-box; /* Ensures padding is included in width/height */
+    background-color: transparent; /* This must be transparent to prevent unwanted overlays */
+}
+
+/* The box around SUGALHEROES text - Matches your desired look and font */
+.dashboard-widget.hero h1 {
+    font-family: var(--font-heading); /* Uses Orbitron from your variables */
+    font-size: 2.5em;
+    /* Increased padding even further to give more vertical space */
+    padding: 20px 20px; /* Increased top/bottom padding from 15px to 20px */
+    margin-bottom: 20px; /* Space between title box and slideshow */
+    color: var(--accent-green); /* Green color for the text from your variables */
+    text-shadow: 0 0 8px rgba(118, 185, 0, 0.7); /* Green glow effect using accent green */
+    text-align: center;
+    background-color: var(--bg-medium); /* Use your medium background for the box itself */
+    border-radius: 5px;
+    /* Consolidating box-shadow to achieve the desired glow and depth */
+    box-shadow: 0 0 15px rgba(118, 185, 0, 0.4), /* Outer green glow */
+                inset 0 0 8px rgba(118, 185, 0, 0.2); /* Inner green glow */
+    border: 1px solid rgba(118, 185, 0, 0.3); /* Subtle green border */
+    width: fit-content; /* Make background fit content */
+    max-width: calc(100% - 40px); /* Account for wrapper padding to prevent overflow */
+    margin-left: auto;
+    margin-right: auto; /* Center the text box */
+    line-height: 1.2; /* Ensure sufficient line height */
+    text-transform: uppercase; /* Match the GAMES heading */
+    /* Add a min-height to ensure it never collapses too much */
+    min-height: 1.5em; /* Ensure enough height for at least one line of text + glow */
+    display: inline-block; /* Ensure it respects padding/min-height correctly */
+}
+
+
+/* --- Slideshow Container --- */
+.slideshow-container {
+    max-width: 800px; /* Desired slimmer width */
+    position: relative;
+    margin: 0 auto; /* Centered, margin-bottom from h1 creates space */
+    border-radius: 8px;
+    overflow: hidden; /* Ensures images are clipped to the container's shape */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Stronger shadow for the slideshow */
+    width: 100%; /* Ensures it takes max-width and adjusts */
+    aspect-ratio: 16 / 9; /* Maintain a common aspect ratio (e.g., 16:9) for consistency */
+    display: flex; /* Use flexbox to center image if it doesn't fill */
+    justify-content: center;
+    align-items: center;
+}
+
+.mySlides {
+    display: none; /* Hidden by default, JavaScript controls visibility */
+    position: absolute; /* Position to fill the container */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Ensure content inside slide doesn't spill */
+}
+
+.mySlides img {
+    width: 100%;
+    height: 100%; /* Fill the entire slide area */
+    object-fit: cover; /* Crop image to fit without stretching, covering the area */
+    display: block; /* Remove extra space below image */
+    border-radius: 8px; /* Match container border-radius */
+}
+
+/* --- Navigation Arrows --- */
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px; /* Center vertically */
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 10; /* Ensure arrows are above the image */
+}
+
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* --- Fade animation --- */
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade {
+    from {opacity: .4}
+    to {opacity: 1}
+}
+
+/* --- Slide Button Styling (inside slideshow) --- */
+.slide-button {
+    position: absolute; /* Position relative to the .mySlides div */
+    bottom: 20px; /* Adjust as needed for vertical positioning */
+    left: 50%; /* Start from the middle */
+    transform: translateX(-50%); /* Center horizontally */
+    display: inline-block;
+    background-color: #ffc107; /* Yellow accent color for the button */
+    color: var(--bg-dark); /* Dark text for contrast */
+    padding: 12px 25px;
+    border: none; /* Ensure no unwanted border */
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family: var(--font-body); /* Apply Roboto font from your variables */
+    font-size: 1.1em;
+    z-index: 5; /* Ensure button is above the image but below arrows */
+    white-space: nowrap; /* Prevent text wrap */
+}
+
+.slide-button:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+    transform: translateX(-50%) translateY(-2px); /* Slight lift effect */
+}
+
+
+/* Games Section (Adapting dashboard.css .dashboard-widget and .stats-grid) */
+.games {
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.games .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.games .header h2 {
+    font-family: var(--font-heading); /* Uses Orbitron from your variables */
+    color: var(--accent-green); /* Uses accent green from your variables */
+    margin: 0;
+    font-size: 1.8em;
+}
+
+.games .header .see-all {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-size: 1em;
+    transition: color 0.3s ease;
+}
+.games .header .see-all:hover {
+    color: lightblue;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    border-color: var(--accent-green);
+}
+
+.card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card .title {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text-color);
+    margin-top: 10px;
+    padding: 0 10px 10px;
+    width: 100%;
+    text-align: center;
+}

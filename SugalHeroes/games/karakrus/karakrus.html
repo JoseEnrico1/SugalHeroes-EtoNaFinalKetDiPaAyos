@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kara Krus Game</title>
+    <link rel="stylesheet" href="karakrus.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<body>
+    <div class="game-container">
+        <div class="user-info-panel">
+            Welcome, <span id="gameUsername">Guest</span>!
+            <p>Balance: $<span id="gameBalance">0.00</span></p>
+        </div>
+        <div class="coin-display-area">
+            <p>Dealer's Flip:</p>
+            <div class="coins">
+                <img id="coin1Result" class="coin-result" src="">
+                <img id="coin2Result" class="coin-result" src="">
+            </div>
+            <p id="gameMessage">Place your bet and flip the coins!</p> </div>
+    </div>
+
+    <footer class="game-footer">
+        <h1>Kara Krus</h1>
+
+        <div class="balance-area">
+            <p>Your Balance: $<span id="playerBalance">0.00</span></p> </div>
+
+        <div class="betting-area">
+            <label for="betAmount">Enter Bet:</label>
+            <input type="number" id="betAmount" min="1" value="10">
+            <button id="flipCoinsBtn">Flip Coins!</button>
+        </div>
+        <div class="game-actions"> <button id="exitGameBtn">Exit Game</button> </div>
+    </footer>
+
+    <script>
+        // --- API Configuration ---
+        const API_BASE_URL = 'http://localhost/sugalhero-api'; // Adjust if your API folder name is different
+        let currentUserToken = null; // Will be set after JWT check
+        let currentBetAmount = 0; // To store the bet placed for resolution
+
+        // --- Helper function to update balance display on the page ---
+        async function updateBalanceDisplay() {
+            const balanceDisplays = document.querySelectorAll('#gameBalance, #playerBalance'); // Update both spans
+            if (!balanceDisplays.length) {
+                console.error("Balance display elements not found!");
+                return;
+            }
+            if (!currentUserToken) {
+                balanceDisplays.forEach(el => el.textContent = 'N/A');
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE_URL}/user_balance.php`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${currentUserToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to fetch balance, token might be invalid or expired. Redirecting...');
+                    localStorage.removeItem('jwt_token');
+                    localStorage.removeItem('user_id');
+                    localStorage.removeItem('username');
+                    window.location.href = '../../authentication/login.php'; // Adjust path
+                    return;
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    const balance = parseFloat(data.balance).toFixed(2);
+                    balanceDisplays.forEach(el => el.textContent = balance);
+                } else {
+                    console.error('API Error fetching balance:', data.message);
+                    if (data.message.includes('Unauthorized') || data.message.includes('token')) {
+                        localStorage.removeItem('jwt_token');
+                        localStorage.removeItem('user_id');
+                        localStorage.removeItem('username');
+                        window.location.href = '../../authentication/login.php'; // Adjust path
+                    }
+                }
+            } catch (error) {
+                console.error('Network or Fetch Error fetching balance:', error);
+                localStorage.removeItem('jwt_token');
+                localStorage.removeItem('user_id');
+                localStorage.removeItem('username');
+                window.location.href = '../../authentication/login.php'; // Adjust path
+            }
+        }
+
+        // --- Helper function to display messages to the user ---
+        function displayGameMessage(message, type = 'info') {
+            const gameMessageElement = document.getElementById("gameMessage");
+            if (gameMessageElement) {
+                gameMessageElement.textContent = message;
+                gameMessageElement.style.color = {
+                    'info': 'white',
+                    'success': 'lightgreen',
+                    'error': 'red',
+                    'loss': 'red',
+                    'win': 'lightgreen',
+                    'draw': 'orange' // For draw/push scenario
+                }[type] || 'white';
+            }
+        }
+
+
+        // --- Page Protection & Initial Data Load ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            const jwtToken = localStorage.getItem('jwt_token');
+            const username = localStorage.getItem('username');
+            const userId = localStorage.getItem('user_id');
+
+            if (!jwtToken || !username || !userId) {
+                console.log('No JWT token found. Redirecting to login...');
+                window.location.href = '../../authentication/login.php'; // Adjust path
+                return;
+            }
+
+            currentUserToken = jwtToken; // Set the global variable
+
+            // Display username (assuming you want to add a username display, e.g., in game-header)
+            // You might need to add an element like <span id="gameUsername"></span> in your HTML
+            const gameUsernameElement = document.getElementById('gameUsername');
+            if(gameUsernameElement) {
+                gameUsernameElement.textContent = username;
+            }
+
+            await updateBalanceDisplay(); // Initial balance display
+
+            // --- Exit Game Function ---
+            document.getElementById('exitGameBtn').addEventListener('click', () => {
+                window.location.href = '../../homepage/index.php'; // Adjust path
+            });
+        });
+    </script>
+
+    <script src="karakrus.js"></script> </body>
+</html>

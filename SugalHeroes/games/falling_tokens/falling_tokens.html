@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Falling Tokens Game</title>
+  <link rel="stylesheet" href="falling_tokens.css" />
+  </head>
+<body>
+  <div class="game-header">
+    <h1>💠 Falling Tokens</h1>
+    <div class="user-info">
+        Welcome, <span id="gameUsername">Guest</span>!
+        <p>Balance: $<span id="gameBalance">0.00</span></p>
+    </div>
+    <div class="scoreboard">
+      <p>Tokens: <span id="tokenCount">0</span></p>
+      <p>Multiplier: <span id="multiplier">1x</span></p>
+      <p>Time Left: <span id="timer">30</span>s</p>
+      <button id="resetTokensBtn">Reset Tokens</button>
+    </div>
+  </div>
+
+  <div class="game-container">
+    <canvas id="gameCanvas" width="850" height="500"></canvas>
+  </div>
+
+<div class="start-screen" id="startScreen">
+  <div class="title-container">
+    <h2 class="game-title">🎮 Falling Tokens</h2>
+    <p class="description">Ready ka na ba'ng pumaldo? Tara na boi at maglaro ng Falling Tokens!!</p>
+    <p class="bet-info">Bet: $40.00 per game</p>
+  </div>
+  <button id="startButton">Start Game</button>
+  <div class="falling-particles" id="fallingParticles"></div>
+</div>
+
+  <div class="game-over" id="gameOverScreen">
+    <h2>💥 Game Over!</h2>
+    <p>You collected <span id="finalTokens">0</span> tokens!</p>
+    <p id="gameOutcomeMessage"></p>
+    <button id="restartGameBtn">Restart</button>
+    <button id="exitGameOverBtn">Exit</button>
+  </div>
+
+  <script src="falling_tokens.js"></script>
+</body>
+</html>

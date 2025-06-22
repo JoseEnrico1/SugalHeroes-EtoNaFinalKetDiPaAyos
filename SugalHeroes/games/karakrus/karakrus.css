@@ -1,0 +1,284 @@
+/* karakrus.css - Redesigned based on dashboard.css */
+
+/* 1. Global Color Palette & Font Imports (from dashboard.css) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&display=swap');
+
+:root {
+    /* Color Palette - Inspired by NVIDIA Dark Theme & Stake */
+    --bg-dark: #1a1a1a;
+    --bg-medium: #222222;
+    --bg-light: #2c2c2c;
+    --text-color: #e0e0e0;
+    --accent-green: #76b900; /* NVIDIA Green */
+    --accent-blue: #007bff; /* A nice blue for interaction */
+    --border-color: #3a3a3a;
+    --hover-bg: #3a3a3a;
+    --win-color: #38b000; /* Darker green for wins */
+    --loss-color: #d12222; /* Red for losses */
+    --button-gradient-start: #333;
+    --button-gradient-end: #111;
+    --font-heading: 'Orbitron', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+}
+
+/* 2. Basic Page Styling (from dashboard.css body, adapted) */
+body {
+    margin: 0;
+    font-family: var(--font-body); /* Using Roboto */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--bg-dark); /* Dark background */
+    color: var(--text-color); /* Light grey text */
+    overflow: hidden; /* Prevent scrollbars */
+    padding: 20px; /* Add some padding around the content */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+}
+
+/* 3. Main Game Container Styling (adapted from dashboard's widget/container styles) */
+.game-container {
+    background-color: var(--bg-medium); /* Slightly lighter dark */
+    border: 1px solid var(--border-color); /* Subtle border */
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    overflow: hidden;
+
+    /* Dealer image as background - KEPT */
+    background-image: url('assets/dealer_with_cape.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    
+    height: 500px;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Push coin-display-area to the bottom */
+    align-items: center;
+    padding-bottom: 20px;
+    
+    margin-bottom: 20px;
+}
+
+/* NEW: User Info Panel Styling (similar to dashboard's header user info) */
+.user-info-panel {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent dark background */
+    padding: 8px 15px;
+    border-radius: 5px;
+    color: var(--text-color);
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    font-family: var(--font-body);
+}
+
+.user-info-panel #gameUsername {
+    font-weight: bold;
+    color: var(--accent-green);
+    font-size: 1.1em;
+}
+
+.user-info-panel #gameBalance {
+    font-weight: bold;
+    color: var(--text-color); /* Keep balance light grey for general, green for special places */
+    font-size: 1.05em;
+}
+
+/* NEW: Game Actions Styling (for Exit button) */
+.game-actions {
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    margin-top: 10px; /* Space from footer */
+}
+
+/* 4. Game Footer Styling (adapted from dashboard's general structure) */
+.game-footer {
+    background-color: var(--bg-medium); /* Darker background */
+    border: 1px solid var(--border-color); /* Subtle border */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Common Text Shadow for readability over backgrounds - KEPT */
+h1, .balance-area p, .betting-area label, .coin-display-area p, #gameMessage {
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    font-family: var(--font-body); /* Ensure all text uses Roboto by default */
+}
+
+
+/* Styling for the game title (h1) */
+.game-footer h1 {
+    font-family: var(--font-heading); /* Using Orbitron for headings */
+    color: var(--accent-green); /* NVIDIA green */
+    margin: 0;
+    font-size: 2em; /* Slightly larger for game title */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Styling for the balance area */
+.balance-area p {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+    color: var(--text-color); /* General text color */
+}
+/* Specific balance span color for emphasis - KEPT */
+#playerBalance {
+    color: var(--accent-green); /* NVIDIA green for main balance display */
+}
+
+/* Styling for the betting input and button area */
+.betting-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%; /* Make sure it takes full width for centering */
+}
+
+.betting-area label {
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.betting-area input[type="number"] {
+    /* ... other styles ... */
+    -moz-appearance: none; /* Hide default number input arrows in Firefox (explicitly) */
+    appearance: none;      /* Standard way to hide default number input arrows */
+}
+/* Hide default number input arrows for Chrome, Safari, Edge - KEPT */
+.betting-area input[type="number"]::-webkit-outer-spin-button,
+.betting-area input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/* General button styling (similar to dashboard buttons) */
+.betting-area button,
+.game-actions button { /* Apply to all main buttons */
+    padding: 10px 20px;
+    background: linear-gradient(to right, var(--button-gradient-start), var(--button-gradient-end)); /* Gradient background */
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.1s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.betting-area button:hover,
+.game-actions button:hover {
+    background-color: var(--hover-bg); /* Subtle hover background */
+    border-color: var(--accent-green); /* Green border on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.betting-area button:active,
+.game-actions button:active {
+    transform: translateY(0); /* Press down effect */
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Specific styling for the Coin Display Area */
+.coin-display-area {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.coin-display-area p {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    font-family: var(--font-body);
+    color: var(--text-color);
+}
+
+.coins {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    min-height: 160px; /* Ensure space for coins even when hidden */
+}
+
+/* Styling for the individual coin image elements - KEPT largely as is */
+.coin-result {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease-out, opacity 0.3s ease-out;
+    opacity: 0; 
+    transform: scale(0);
+    /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.7); /* Added a subtle shadow */
+}
+
+.coin-result.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Result Area (for game messages) - Styled to match dashboard messages */
+.result-area {
+    font-size: 1.3em; /* Slightly smaller than your original 1.4em for subtlety */
+    font-weight: bold;
+    min-height: 30px;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 10px; /* Space from footer */
+}
+
+#gameMessage {
+    color: var(--text-color); /* Default message color */
+    font-family: var(--font-heading); /* Use Orbitron for messages */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+/* Specific colors for messages (from dashboard) */
+#gameMessage.success { color: var(--win-color); } /* Green for win */
+#gameMessage.error { color: var(--loss-color); } /* Red for error/loss */
+#gameMessage.warning { color: orange; } /* Orange for warnings */
+#gameMessage.info { color: var(--accent-blue); } /* Blue for info */
+#gameMessage.draw { color: orange; } /* Orange for draw */
+
+
+/* CSS for Coin Flip Animation - KEPT */
+@keyframes coinFlip {
+    0% { transform: rotateY(0deg) scale(0.5); opacity: 0; }
+    10% { opacity: 1; transform: rotateY(0deg) scale(1); }
+    25% { transform: rotateY(90deg) scale(1.1); }
+    50% { transform: rotateY(180deg) scale(1.2); }
+    75% { transform: rotateY(270deg) scale(1.1); }
+    100% { transform: rotateY(360deg) scale(1); }
+}
+
+.flipping {
+    animation: coinFlip 0.7s ease-in-out;
+}

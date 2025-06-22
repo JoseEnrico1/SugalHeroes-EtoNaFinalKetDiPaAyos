@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Page - SugalHeroes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; margin-right: 10px; }
+        button:hover { background-color: #0056b3; }
+        #response { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; min-height: 50px; white-space: pre-wrap; font-family: monospace; }
+        input { padding: 8px; margin-right: 5px; border: 1px solid #ddd; }
+        div { margin-bottom: 10px; }
+    </style>
+</head>
+    <body>
+    <h1>SugalHeroes API Tester</h1>
+
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" value="testuser_new">
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" value="test_new@example.com">
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" value="TestPass123!">
+    </div>
+
+    <button id="registerBtn">Test Register</button>
+    <button id="loginBtn">Test Login</button>
+    <button id="getBalanceBtn">Get Balance</button>
+    <button id="getTransactionsBtn">Get Transactions</button>
+
+    <h3>Place a Bet</h3>
+    <div>
+        <label for="betAmount">Amount:</label>
+        <input type="number" id="betAmount" value="10.00" step="0.01">
+    </div>
+    <div>
+        <label for="gameId">Game ID:</label>
+        <input type="text" id="gameId" value="1">
+    </div>
+    <button id="placeBetBtn">Place Bet</button>
+
+    <h3>Resolve a Bet</h3>
+    <div>
+        <label for="resolveBetId">Bet Transaction ID:</label>
+        <input type="number" id="resolveBetId" value="">
+    </div>
+    <div>
+        <label for="betOutcome">Outcome:</label>
+        <select id="betOutcome">
+            <option value="win">Win</option>
+            <option value="loss">Loss</option>
+        </select>
+    </div>
+    <div>
+        <label for="payoutAmount">Payout (if Win):</label>
+        <input type="number" id="payoutAmount" value="20.00" step="0.01">
+    </div>
+    <button id="resolveBetBtn">Resolve Bet</button>
+
+    <h3>Deposit Funds</h3>
+    <div>
+        <label for="depositAmount">Amount:</label>
+        <input type="number" id="depositAmount" value="100.00" step="0.01">
+    </div>
+    <button id="depositBtn">Deposit</button>
+
+    <h3>Withdraw Funds</h3> <div>
+        <label for="withdrawAmount">Amount:</label>
+        <input type="number" id="withdrawAmount" value="50.00" step="0.01">
+    </div>
+    <button id="withdrawBtn">Withdraw</button> <h2>API Response:</h2>
+    <pre id="response"></pre>
+
+    <script>
+            const API_BASE_URL = 'http://localhost/sugalhero-api'; // Adjust if your folder name is different
+
+            let currentUserToken = null; // Variable to store the JWT after login
+
+            // Function to handle user registration (already present)
+            async function registerUser() {
+                const usernameInput = document.getElementById('username').value;
+                const emailInput = document.getElementById('email').value;
+                const passwordInput = document.getElementById('password').value;
+                const responseDiv = document.getElementById('response');
+
+                if (!usernameInput || !emailInput || !passwordInput) {
+                    responseDiv.textContent = "Please fill in all fields for registration.";
+                    responseDiv.style.color = 'red';
+                    return;
+                }
+
+                const userData = {
+                    username: usernameInput,
+                    email: emailInput,
+                    password: passwordInput
+                };
+
+                responseDiv.textContent = 'Sending registration request...';
+                responseDiv.style.color = '#333';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/register.php`, { // Or signup.php if you renamed it
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(userData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        responseDiv.textContent = `Registration Success (${response.status}):\n${JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'green';
+                        console.log('Registration successful:', data);
+                    } else {
+                        responseDiv.textContent = `Registration Error (${response.status}):\n${data.message || JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'red';
+                        console.error('API Error:', data);
+                    }
+
+                } catch (error) {
+                    responseDiv.textContent = `Network Error during Registration: ${error.message}`;
+                    responseDiv.style.color = 'red';
+                    console.error('Network or Fetch Error:', error);
+                }
+            }
+
+
+            // --- NEW: Function to handle user login ---
+            async function loginUser() {
+                const usernameInput = document.getElementById('username').value;
+                const passwordInput = document.getElementById('password').value;
+                const responseDiv = document.getElementById('response');
+
+                if (!usernameInput || !passwordInput) {
+                    responseDiv.textContent = "Please fill in username and password for login.";
+                    response.Div.style.color = 'red';
+                    return;
+                }
+
+                const loginData = {
+                    username: usernameInput,
+                    password: passwordInput
+                };
+
+                responseDiv.textContent = 'Sending login request...';
+                responseDiv.style.color = '#333';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/login.php`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(loginData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) { // Check if status is 2xx
+                        currentUserToken = data.token; // Store the received token
+                        responseDiv.textContent = `Login Success (${response.status}):\n${JSON.stringify(data, null, 2)}\n\nTOKEN: ${currentUserToken}`;
+                        responseDiv.style.color = 'green';
+                        console.log('Login successful:', data);
+                        console.log('Received Token:', currentUserToken);
+                    } else {
+                        responseDiv.textContent = `Login Error (${response.status}):\n${data.message || JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'red';
+                        console.error('API Error:', data);
+                        currentUserToken = null; // Clear token on failure
+                    }
+
+                } catch (error) {
+                    responseDiv.textContent = `Network Error during Login: ${error.message}`;
+                    responseDiv.style.color = 'red';
+                    console.error('Network or Fetch Error:', error);
+                    currentUserToken = null;
+                }
+            }
+
+            // --- NEW: Function to fetch user balance ---
+            async function getUserBalance() {
+                const responseDiv = document.getElementById('response');
+
+                if (!currentUserToken) {
+                    responseDiv.textContent = "Please login first to get a token.";
+                    responseDiv.style.color = 'orange';
+                    console.warn("No token available. Please login.");
+                    return;
+                }
+
+                responseDiv.textContent = 'Fetching user balance...';
+                responseDiv.style.color = '#333';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/user_balance.php`, { // This endpoint we'll create next
+                        method: 'GET', // Balance is typically a GET request
+                        headers: {
+                            'Authorization': `Bearer ${currentUserToken}`, // Send the token in the Authorization header
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        responseDiv.textContent = `Balance Success (${response.status}):\n${JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'green';
+                        console.log('Balance fetched:', data);
+                    } else {
+                        responseDiv.textContent = `Balance Error (${response.status}):\n${data.message || JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'red';
+                        console.error('API Error:', data);
+                    }
+
+                } catch (error) {
+                    responseDiv.textContent = `Network Error fetching Balance: ${error.message}`;
+                    responseDiv.style.color = 'red';
+                    console.error('Network or Fetch Error:', error);
+                }
+            }
+
+            async function placeBet() {
+                const betAmountInput = document.getElementById('betAmount').value;
+                const gameIdInput = document.getElementById('gameId').value;
+                const responseDiv = document.getElementById('response');
+
+                if (!currentUserToken) {
+                    responseDiv.textContent = "Please login first to place a bet.";
+                    responseDiv.style.color = 'orange';
+                    console.warn("No token available. Please login.");
+                    return;
+                }
+
+                // Basic validation for bet amount
+                const amount = parseFloat(betAmountInput);
+                if (isNaN(amount) || amount <= 0) {
+                    responseDiv.textContent = "Please enter a valid positive bet amount.";
+                    responseDiv.style.color = 'red';
+                    return;
+                }
+
+                const betData = {
+                    amount: amount,
+                    game_id: gameIdInput // Or leave as null if not needed for the test
+                    // You could add 'details' here if your game has complex bet info
+                };
+
+                responseDiv.textContent = 'Sending bet request...';
+                responseDiv.style.color = '#333';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/place_bet.php`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${currentUserToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(betData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        responseDiv.textContent = `Bet Success (${response.status}):\n${JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'green';
+                        console.log('Bet placed successfully:', data);
+                    } else {
+                        responseDiv.textContent = `Bet Error (${response.status}):\n${data.message || JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'red';
+                        console.error('API Error:', data);
+                    }
+
+                } catch (error) {
+                    responseDiv.textContent = `Network Error placing Bet: ${error.message}`;
+                    responseDiv.style.color = 'red';
+                    console.error('Network or Fetch Error:', error);
+                }
+            }
+
+            // --- NEW: Function to resolve a bet (win/loss) ---
+            async function resolveBet() {
+                const betTransactionIdInput = document.getElementById('resolveBetId').value;
+                const outcomeInput = document.getElementById('betOutcome').value;
+                const payoutAmountInput = document.getElementById('payoutAmount').value;
+                const responseDiv = document.getElementById('response');
+
+                if (!currentUserToken) {
+                    responseDiv.textContent = "Please login first to resolve a bet.";
+                    responseDiv.style.color = 'orange';
+                    return;
+                }
+
+                // Basic validation
+                const betId = parseInt(betTransactionIdInput);
+                const payout = parseFloat(payoutAmountInput);
+
+                if (isNaN(betId) || betId <= 0) {
+                    responseDiv.textContent = "Please enter a valid Bet Transaction ID.";
+                    responseDiv.style.color = 'red';
+                    return;
+                }
+                if (!['win', 'loss'].includes(outcomeInput)) {
+                    responseDiv.textContent = "Invalid outcome. Must be 'win' or 'loss'.";
+                    responseDiv.style.color = 'red';
+                    return;
+                }
+                if (outcomeInput === 'win' && (isNaN(payout) || payout <= 0)) {
+                    responseDiv.textContent = "Payout amount is required and must be positive for a win.";
+                    responseDiv.style.color = 'red';
+                    return;
+                }
+
+                const resolveData = {
+                    bet_transaction_id: betId,
+                    outcome: outcomeInput,
+                    payout_amount: outcomeInput === 'win' ? payout : 0 // Only send payout if win
+                };
+
+                responseDiv.textContent = 'Sending bet resolution request...';
+                responseDiv.style.color = '#333';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/resolve_bet.php`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${currentUserToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(resolveData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        responseDiv.textContent = `Resolve Bet Success (${response.status}):\n${JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'green';
+                        console.log('Bet resolved successfully:', data);
+                    } else {
+                        responseDiv.textContent = `Resolve Bet Error (${response.status}):\n${data.message || JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'red';
+                        console.error('API Error:', data);
+                    }
+
+                } catch (error) {
+                    responseDiv.textContent = `Network Error resolving Bet: ${error.message}`;
+                    responseDiv.style.color = 'red';
+                    console.error('Network or Fetch Error:', error);
+                }
+            }
+
+            // --- NEW: Function to get user transactions ---
+            async function getUserTransactions() {
+                const responseDiv = document.getElementById('response');
+
+                if (!currentUserToken) {
+                    responseDiv.textContent = "Please login first to get transactions.";
+                    responseDiv.style.color = 'orange';
+                    console.warn("No token available. Please login.");
+                    return;
+                }
+
+                responseDiv.textContent = 'Fetching user transactions...';
+                responseDiv.style.color = '#333';
+
+                // You can add page/limit parameters to the URL if needed, e.g., ?page=1&limit=5
+                const transactionsApiURL = `${API_BASE_URL}/user_transactions.php`;
+
+                try {
+                    const response = await fetch(transactionsApiURL, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${currentUserToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        responseDiv.textContent = `Transactions Success (${response.status}):\n${JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'green';
+                        console.log('Transactions fetched successfully:', data);
+                    } else {
+                        responseDiv.textContent = `Transactions Error (${response.status}):\n${data.message || JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'red';
+                        console.error('API Error:', data);
+                    }
+
+                } catch (error) {
+                    responseDiv.textContent = `Network Error fetching Transactions: ${error.message}`;
+                    responseDiv.style.color = 'red';
+                    console.error('Network or Fetch Error:', error);
+                }
+            }
+
+            // --- NEW: Function to deposit funds ---
+            async function depositFunds() {
+                const depositAmountInput = document.getElementById('depositAmount').value;
+                const responseDiv = document.getElementById('response');
+
+                if (!currentUserToken) {
+                    responseDiv.textContent = "Please login first to deposit funds.";
+                    responseDiv.style.color = 'orange';
+                    console.warn("No token available. Please login.");
+                    return;
+                }
+
+                const amount = parseFloat(depositAmountInput);
+                if (isNaN(amount) || amount <= 0) {
+                    responseDiv.textContent = "Please enter a valid positive deposit amount.";
+                    responseDiv.style.color = 'red';
+                    return;
+                }
+
+                const depositData = {
+                    amount: amount
+                };
+
+                responseDiv.textContent = 'Sending deposit request...';
+                responseDiv.style.color = '#333';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/deposit.php`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${currentUserToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(depositData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        responseDiv.textContent = `Deposit Success (${response.status}):\n${JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'green';
+                        console.log('Funds deposited successfully:', data);
+                    } else {
+                        responseDiv.textContent = `Deposit Error (${response.status}):\n${data.message || JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'red';
+                        console.error('API Error:', data);
+                    }
+
+                } catch (error) {
+                    responseDiv.textContent = `Network Error depositing funds: ${error.message}`;
+                    responseDiv.style.color = 'red';
+                    console.error('Network or Fetch Error:', error);
+                }
+            }
+
+            // --- NEW: Function to withdraw funds ---
+            async function withdrawFunds() {
+                const withdrawAmountInput = document.getElementById('withdrawAmount').value;
+                const responseDiv = document.getElementById('response');
+
+                if (!currentUserToken) {
+                    responseDiv.textContent = "Please login first to withdraw funds.";
+                    responseDiv.style.color = 'orange';
+                    console.warn("No token available. Please login.");
+                    return;
+                }
+
+                const amount = parseFloat(withdrawAmountInput);
+                if (isNaN(amount) || amount <= 0) {
+                    responseDiv.textContent = "Please enter a valid positive withdrawal amount.";
+                    responseDiv.style.color = 'red';
+                    return;
+                }
+
+                const withdrawData = {
+                    amount: amount
+                };
+
+                responseDiv.textContent = 'Sending withdrawal request...';
+                responseDiv.style.color = '#333';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/withdraw.php`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${currentUserToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(withdrawData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        responseDiv.textContent = `Withdrawal Success (${response.status}):\n${JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'green';
+                        console.log('Funds withdrawn successfully:', data);
+                    } else {
+                        responseDiv.textContent = `Withdrawal Error (${response.status}):\n${data.message || JSON.stringify(data, null, 2)}`;
+                        responseDiv.style.color = 'red';
+                        console.error('API Error:', data);
+                    }
+
+                } catch (error) {
+                    responseDiv.textContent = `Network Error withdrawing funds: ${error.message}`;
+                    responseDiv.style.color = 'red';
+                    console.error('Network or Fetch Error:', error);
+                }
+            }
+
+            // --- Event listeners (make sure these are at the very bottom of your script) ---
+            document.getElementById('registerBtn').addEventListener('click', registerUser);
+            document.getElementById('loginBtn').addEventListener('click', loginUser); // Now calls loginUser()
+            document.getElementById('getBalanceBtn').addEventListener('click', getUserBalance); // NEW: Get Balance button
+            document.getElementById('getTransactionsBtn').addEventListener('click', getUserTransactions); // NEW listener
+            document.getElementById('placeBetBtn').addEventListener('click', placeBet); // NEW listener
+            document.getElementById('resolveBetBtn').addEventListener('click', resolveBet); // NEW listener
+            document.getElementById('depositBtn').addEventListener('click', depositFunds); // NEW listener
+            document.getElementById('withdrawBtn').addEventListener('click', withdrawFunds); // NEW listener
+        </script>

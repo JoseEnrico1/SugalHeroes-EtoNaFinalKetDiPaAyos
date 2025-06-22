@@ -1,0 +1,523 @@
+/* homepage/purchase-sgc.css - All Styles for the Purchase SGC Page */
+
+/* --- Font Imports --- */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&display=swap');
+
+/* --- Root Variables (Common theme across the site) --- */
+:root {
+    --bg-dark: #1a1a1a;
+    --bg-medium: #222222;
+    --bg-light: #2c2c2c;
+    --text-color: #e0e0e0;
+    --accent-green: #76b900; /* NVIDIA Green */
+    --accent-blue: #007bff; /* A nice blue for interaction */
+    --border-color: #3a3a3a;
+    --hover-bg: #3a3a3a;
+    --win-color: #38b000; /* Darker green for wins */
+    --loss-color: #d12222; /* Red for losses */
+    --button-gradient-start: #333;
+    --button-gradient-end: #111;
+    --font-heading: 'Orbitron', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+}
+
+/* --- Global Reset --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Body Styling --- */
+body {
+    margin: 0;
+    font-family: var(--font-body);
+    background-color: var(--bg-dark);
+    color: var(--text-color);
+    overflow: hidden; /* Prevent scrollbars unless needed by specific elements */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Dashboard Container Layout --- */
+.dashboard-container {
+    display: flex;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;
+    overflow-x: auto; /* Allow horizontal scroll if content exceeds viewport width */
+    overflow-y: hidden; /* Prevent vertical scroll on this outer container */
+}
+
+/* --- Sidebar Styling --- */
+.sidebar {
+    position: relative;
+    width: 150px; /* Compact for dashboard */
+    background-color: var(--bg-medium);
+    padding: 20px 0;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 0 15px;
+}
+
+.sidebar-header img {
+    max-width: 100%;
+    max-height: 40px;
+    height: auto;
+    object-fit: contain;
+}
+
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.main-nav li {
+    margin-bottom: 5px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 0;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, color 0.3s ease, border-left 0.3s ease;
+    border-left: 5px solid transparent;
+}
+
+.nav-item i {
+    margin-right: 0;
+    margin-bottom: 5px;
+    font-size: 1.5em;
+    color: var(--accent-green);
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background-color: var(--hover-bg);
+    color: var(--accent-green);
+    border-left: 5px solid var(--accent-green);
+}
+
+.nav-item.active i {
+    color: var(--text-color);
+}
+
+/* --- Main Content Area --- */
+.main-content {
+    flex-grow: 1;
+    flex-shrink: 0; 
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-dark);
+    padding: 20px 30px;
+    overflow-y: auto;
+    max-width: 100%;
+    margin: 0; 
+    min-width: calc(1000px + 50px); /* Min width for content + padding */
+}
+
+/* --- Header Styling --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    background-color: var(--bg-dark);
+    z-index: 900;
+    width: 100%;
+}
+
+/* Home Button styling */
+.home-button {
+    background: linear-gradient(to right, var(--button-gradient-start), var(--button-gradient-end));
+    color: var(--text-color);
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.home-button i {
+    margin-right: 8px;
+    color: var(--accent-green);
+}
+
+.home-button:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-green);
+}
+
+/* Container for the right-side header actions */
+.right-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Crypto Wallet Display Styling */
+/*.crypto-wallet-display {
+    /* No flex properties here directly, as it's a child of .right-header-actions */
+
+
+#sugalCoinBalance {
+    background-color: var(--accent-green);
+    color: var(--bg-dark);
+    padding: 8px 12px;
+    border: 1px solid var(--accent-green);
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1em;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    /* On purchase_sgc.php, this will be display-only, so cursor will be default by JS */
+    cursor: default; 
+}
+
+#sugalCoinBalance:hover {
+    /* On purchase_sgc.php, hover effects might not be desired for display-only */
+    background-color: var(--accent-green); /* Keep same color */
+    border-color: var(--accent-green); /* Keep same color */
+    color: var(--bg-dark); /* Keep same color */
+}
+
+/* Styles for different states (MetaMask not installed, wrong network, error) */
+#sugalCoinBalance[data-status="error"] {
+    background-color: var(--loss-color);
+    border-color: var(--loss-color);
+    color: white;
+}
+
+#sugalCoinBalance[data-status="install"] {
+    background-color: orange;
+    border-color: orange;
+    color: white;
+}
+
+#sugalCoinBalance[data-status="wrong-network"] {
+    background-color: orange;
+    border-color: orange;
+    color: white;
+}
+
+/* User Account Dropdown */
+.user-account-dropdown {
+    position: relative;
+    z-index: 20;
+}
+
+.dropdown-toggle {
+    background: linear-gradient(to right, var(--button-gradient-start), var(--button-gradient-end));
+    color: var(--text-color);
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.dropdown-toggle i {
+    margin-right: 8px;
+    color: var(--accent-green);
+}
+
+.dropdown-toggle:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-green);
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    overflow: hidden;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.account-balance {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-green);
+    font-weight: bold;
+}
+
+.top-up-button,
+.logout-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.top-up-button {
+    background-color: var(--accent-green);
+    color: var(--bg-dark);
+}
+
+.top-up-button:hover {
+    background-color: #609d00;
+}
+
+.logout-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+/* --- Modal Styling (for modals like topUpModal) --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #2D3035;
+    margin: auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    position: relative;
+    color: #E0E0E0;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close-button {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-family: var(--font-heading);
+}
+
+.modal-content .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.modal-content input[type="number"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #555;
+    background-color: #1A1D20;
+    color: #E0E0E0;
+    border-radius: 4px;
+}
+
+.modal-content button {
+    background-color: #00B140;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.modal-content button:hover {
+    background-color: #008f33;
+}
+
+.modal-message {
+    margin-top: 15px;
+    font-weight: bold;
+}
+.modal-message.success { color: green; }
+.modal-message.error { color: red; }
+.modal-message.info { color: #007bff; }
+
+
+/* --- Widget Styling (dashboard-widget) --- */
+/* This is used by the section on purchase_sgc.php with id="purchase-sgc-page-content" */
+.dashboard-widget {
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 25px; /* Ensure content has padding from widget edge */
+    border-radius: 8px;
+    margin-bottom: 20px; /* Standard margin for widgets */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    max-width: 100%; /* Allows it to expand within main-content */
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content within widget */
+}
+/* Specific style for purchase page's main content widget if needed */
+#purchase-sgc-page-content {
+    padding: 50px 30px; /* More generous padding for this main section */
+    margin-top: 20px; /* Space from header */
+    margin-bottom: 50px; /* Space from bottom of main-content */
+}
+.hero-content-wrapper { /* Used inside dashboard-widget on purchase page (reused class) */
+    width: 100%; /* Takes full width of its parent widget */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: transparent;
+}
+
+
+/* --- Styles for the Purchase SGC Page's unique elements --- */
+
+.page-title {
+    font-family: var(--font-heading);
+    font-size: 3.5em; /* Giant text size */
+    color: var(--accent-green);
+    text-shadow: 0 0 15px rgba(118, 185, 0, 1.0), 0 0 25px rgba(118, 185, 0, 0.7);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 30px; /* Space below title */
+    padding: 20px; /* Padding for the title, if it gets a background later */
+}
+
+.purchase-info {
+    color: var(--text-color);
+    font-size: 1.1em;
+    text-align: center;
+    margin-bottom: 40px; /* Space below info text */
+}
+
+.purchase-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Responsive grid for cards */
+    gap: 25px; /* Space between cards */
+    max-width: 1200px; /* Max width for the grid itself, center it */
+    margin: 0 auto;
+    padding: 0 20px; /* Padding on the sides of the grid */
+}
+
+.purchase-card {
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center content vertically */
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer; /* Indicate it's clickable (the whole card) */
+}
+
+.purchase-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    border-color: var(--accent-green); /* Highlight on hover */
+}
+
+.purchase-card .sgc-amount {
+    font-family: var(--font-heading);
+    font-size: 2.2em;
+    color: var(--accent-green);
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-shadow: 0 0 5px rgba(118, 185, 0, 0.7); /* Subtle glow for amount */
+}
+
+.purchase-card .price {
+    font-family: var(--font-body);
+    font-size: 1.1em;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 20px;
+}
+
+.purchase-card .buy-sgc-btn {
+    background-color: var(--accent-green); /* Green button */
+    color: var(--bg-dark); /* Dark text on green */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.purchase-card .buy-sgc-btn:hover {
+    background-color: #609d00; /* Darker green on hover */
+    transform: translateY(-2px);
+}

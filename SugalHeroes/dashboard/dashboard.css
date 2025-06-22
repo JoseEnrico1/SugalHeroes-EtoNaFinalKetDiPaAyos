@@ -1,0 +1,544 @@
+/* General Styling & Font Imports (NVIDIA-like) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&display=swap'); /* Roboto for body, Orbitron for headings/prominent text */
+
+:root {
+    /* Color Palette - Inspired by NVIDIA Dark Theme & Stake */
+    --bg-dark: #1a1a1a;
+    --bg-medium: #222222;
+    --bg-light: #2c2c2c;
+    --text-color: #e0e0e0;
+    --accent-green: #76b900; /* NVIDIA Green */
+    --accent-blue: #007bff; /* A nice blue for interaction */
+    --border-color: #3a3a3a;
+    --hover-bg: #3a3a3a;
+    --win-color: #38b000; /* Darker green for wins */
+    --loss-color: #d12222; /* Red for losses */
+    --button-gradient-start: #333;
+    --button-gradient-end: #111;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-color);
+    overflow: hidden; /* Prevent scrollbars unless needed by specific elements */
+}
+
+/* Dashboard Container Layout */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Sidebar Styling (Left Navigation - NVIDIA/Stake inspired sleekness) */
+.sidebar {
+    width: 250px;
+    background-color: var(--bg-medium);
+    padding: 20px 0;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    z-index: 10; /* Ensure it stays above main content if needed */
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 0 20px;
+}
+
+.sidebar-header img { /* Style for the logo image */
+    max-width: 100%; /* Ensure logo doesn't overflow its parent */
+    max-height: 1000px; /* Constrain height */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensure the entire logo is visible */
+}
+
+.sidebar-header h2 {
+    font-family: 'Orbitron', sans-serif; /* Use Orbitron for a techy feel */
+    color: var(--accent-green);
+    font-size: 1.8em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.main-nav li {
+    margin-bottom: 5px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, color 0.3s ease, border-left 0.3s ease;
+    border-left: 5px solid transparent;
+}
+
+.nav-item i {
+    margin-right: 15px;
+    font-size: 1.3em;
+    color: var(--accent-green); /* Icons get the accent color */
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background-color: var(--hover-bg);
+    color: var(--accent-green);
+    border-left: 5px solid var(--accent-green);
+}
+
+.nav-item.active i {
+    color: var(--text-color); /* Active icon turns white for contrast */
+}
+
+/* Main Content Area */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-dark);
+    padding: 20px 30px;
+    overflow-y: auto; /* Enable scrolling for the main content */
+}
+
+/* Header Styling */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.home-button {
+    background: linear-gradient(to right, var(--button-gradient-start), var(--button-gradient-end));
+    color: var(--text-color);
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.home-button i {
+    margin-right: 8px;
+    color: var(--accent-green);
+}
+
+.home-button:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-green);
+}
+
+/* User Account Dropdown */
+.user-account-dropdown {
+    position: relative;
+    z-index: 20; /* Ensure dropdown is on top */
+}
+
+.dropdown-toggle {
+    background: linear-gradient(to right, var(--button-gradient-start), var(--button-gradient-end));
+    color: var(--text-color);
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.dropdown-toggle i {
+    margin-right: 8px;
+    color: var(--accent-green);
+}
+
+.dropdown-toggle:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-green);
+}
+
+.dropdown-menu {
+    display: none; /* Hidden by default, will be shown by JS */
+    position: absolute;
+    top: calc(100% + 10px); /* Position below the button */
+    right: 0;
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    padding: 15px;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.account-balance {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-green);
+    font-weight: bold;
+}
+
+.top-up-button,
+.logout-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.top-up-button {
+    background-color: var(--accent-green);
+    color: var(--bg-dark); /* Dark text on green button */
+}
+
+.top-up-button:hover {
+    background-color: #609d00; /* Slightly darker green on hover */
+}
+
+.logout-button {
+    background-color: #dc3545; /* Red for logout */
+    color: white;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+/* Dashboard Display & Widgets */
+.dashboard-display h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-green);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 2.2em;
+}
+
+.dashboard-display p {
+    font-size: 1.1em;
+    color: var(--text-color);
+    margin-bottom: 30px;
+}
+
+.dashboard-widget {
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-widget h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-green);
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+/* Betting History Window (Table Styling) - Now with fixed height and scrolling! */
+.betting-history-window {
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+    max-height: 400px; /* Set a maximum height for the window */
+    overflow-y: auto;  /* Enable vertical scrolling if content exceeds max-height */
+    padding-right: 15px; /* Adjust this value to account for the scrollbar width */
+}
+
+.betting-history-window h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-green);
+    margin-top: 0;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.betting-history-window h2 i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.betting-history-window table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.95em;
+    margin-bottom: 0; /* Important for preventing margin issues with scrolling */
+}
+
+.betting-history-window th,
+.betting-history-window td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.betting-history-window th {
+    background-color: var(--bg-light);
+    color: var(--accent-green);
+    font-weight: bold;
+    text-transform: uppercase;
+    position: sticky; /* Make header sticky */
+    top: -1px; /* Stick it just below the border top of the container */
+    z-index: 1; /* Ensure header stays above scrolling content */
+}
+
+.betting-history-window tbody tr:hover {
+    background-color: var(--hover-bg);
+}
+
+.betting-history-window .win {
+    color: var(--win-color);
+    font-weight: bold;
+}
+
+.betting-history-window .loss {
+    color: var(--loss-color);
+    font-weight: bold;
+}
+
+/* --- Statistics Window Styling --- */
+.statistics-window {
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.statistics-window h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-green);
+    margin-top: 0;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.statistics-window h2 i {
+    margin-right: 12px;
+    font-size: 1.3em;
+    color: var(--accent-green);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.stat-card h3 {
+    font-family: 'Roboto', sans-serif; /* Keep this simple for readability */
+    color: var(--text-color);
+    font-size: 1.1em;
+    margin-top: 0;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.stat-card .stat-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--accent-green); /* Default for numbers */
+    margin: 0;
+}
+
+.stat-card .stat-value.profit {
+    color: var(--win-color); /* Green for profit */
+}
+
+.stat-card .stat-value.loss {
+    color: var(--loss-color); /* Red for loss (if you add this class) */
+}
+
+.stat-card .stat-value.big-win {
+    color: #ffda44; /* A golden color for biggest win */
+    font-size: 2.2em;
+}
+
+/* Chart Area Styling */
+.chart-area {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    /* Ensure charts have a height to be visible */
+    height: 300px; /* Adjust as needed */
+    display: flex; /* Use flex to center canvas or allow it to fill space */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-area h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-green);
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    width: 100%; /* Make sure title spans full width */
+    text-align: left; /* Align title left within its area */
+}
+
+.chart-area canvas {
+    /* Make canvas fill the available space within its parent (chart-area) */
+    max-width: 100%;
+    max-height: calc(100% - 60px); /* Adjust for header height */
+    /* You may need to set a specific width/height if maintainAspectRatio is false and flex doesn't fully control it */
+    width: 100% !important;
+    height: auto !important; /* Let aspect ratio control height */
+}
+
+/* Basic Modal Styles - Integrate these into your dashboard.css */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+    justify-content: center; /* Use flex to center content */
+    align-items: center; /* Use flex to center content */
+}
+
+.modal-content {
+    background-color: #2D3035; /* Dark background matching your theme */
+    margin: auto; /* For browsers that don't support flex centering */
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%; /* Could be adjusted */
+    max-width: 500px;
+    border-radius: 8px;
+    position: relative;
+    color: #E0E0E0; /* Light text color */
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close-button {
+    color: #aaa;
+    float: right; /* Float to position at top right */
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute; /* Position relative to modal-content */
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.modal-content .form-group {
+    margin-bottom: 15px;
+    text-align: left; /* Align labels/inputs to the left within their group */
+}
+
+.modal-content label {
+    display: block; /* Ensure label takes full width */
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.modal-content input[type="number"] {
+    width: calc(100% - 22px); /* Adjust for padding/border */
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #555;
+    background-color: #1A1D20;
+    color: #E0E0E0;
+    border-radius: 4px;
+}
+
+.modal-content button {
+    background-color: #00B140; /* NVIDIA green */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.modal-content button:hover {
+    background-color: #008f33;
+}
+
+.modal-message {
+    margin-top: 15px;
+    font-weight: bold;
+}
+.modal-message.success { color: green; }
+.modal-message.error { color: red; }
+.modal-message.info { color: #007bff; }

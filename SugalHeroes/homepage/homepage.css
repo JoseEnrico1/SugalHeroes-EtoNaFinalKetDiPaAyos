@@ -1,0 +1,642 @@
+/* homepage/homepage.css - Comprehensive Styles for Homepage */
+
+/* --- Font Imports --- */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&display=swap');
+
+/* --- Root Variables (from your dashboard.css) --- */
+:root {
+    --bg-dark: #1a1a1a;
+    --bg-medium: #222222;
+    --bg-light: #2c2c2c;
+    --text-color: #e0e0e0;
+    --accent-green: #76b900; /* NVIDIA Green */
+    --accent-blue: #007bff; /* A nice blue for interaction */
+    --border-color: #3a3a3a;
+    --hover-bg: #3a3a3a;
+    --win-color: #38b000; /* Darker green for wins */
+    --loss-color: #d12222; /* Red for losses */
+    --button-gradient-start: #333;
+    --button-gradient-end: #111;
+    --font-heading: 'Orbitron', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+}
+
+/* --- Global Reset --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Body Styling --- */
+body {
+    margin: 0;
+    font-family: var(--font-body);
+    background-color: var(--bg-dark);
+    color: var(--text-color);
+    overflow: hidden; /* Keep hidden on body itself to prevent overall page scrollbars */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Dashboard Container Layout (Matches dashboard.css) --- */
+.dashboard-container {
+    display: flex;
+    height: 100vh; /* Full viewport height, as per dashboard.css */
+    width: 100vw;
+    /* NEW: Explicitly allow horizontal scroll if content exceeds viewport width */
+    overflow-x: auto; 
+    /* NEW: Prevent vertical scroll on this container if main-content handles it */
+    overflow-y: hidden; 
+}
+
+/* --- Sidebar Styling (Compact for Homepage, but matching dashboard.css patterns) --- */
+.sidebar {
+    position: relative;
+    width: 200px; /* Keep compact for homepage */
+    background-color: var(--bg-medium);
+    padding: 20px 0;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    flex-shrink: 0; /* Prevent sidebar from shrinking when main-content grows */
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 0 15px; /* Adjusted padding for compact sidebar */
+}
+
+.sidebar-header img { /* Style for the logo image */
+    max-width: 150%;
+    max-height: 180px; /* Adjusted max-height for compact sidebar */
+    height: auto;
+    object-fit: contain;
+}
+
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.main-nav li {
+    margin-bottom: 5px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column; /* Stack icon and text for compact sidebar */
+    align-items: center;
+    padding: 15px 0; /* Adjusted padding for compact sidebar */
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.9em; /* Smaller font for compact sidebar */
+    transition: background-color 0.3s ease, color 0.3s ease, border-left 0.3s ease;
+    border-left: 5px solid transparent;
+}
+
+.nav-item i {
+    margin-right: 0; /* No margin on right for compact sidebar */
+    margin-bottom: 5px; /* Space between icon and text */
+    font-size: 1.5em; /* Larger icons for compact sidebar */
+    color: var(--accent-green);
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background-color: var(--hover-bg);
+    color: var(--accent-green);
+    border-left: 5px solid var(--accent-green);
+}
+
+.nav-item.active i {
+    color: var(--text-color);
+}
+
+/* --- Main Content Area --- */
+.main-content {
+    flex-grow: 1;
+    flex-shrink: 0; /* Prevents main-content from shrinking */
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-dark);
+    padding: 20px 30px;
+    overflow-y: auto;
+    max-width: 100%;
+    margin: 0; 
+    min-width: calc(1000px + 50px); /* Min width for content + padding */
+}
+
+/* Header Styling */
+.header {
+    display: flex;
+    justify-content: space-between; /* Pushes .left and .right-header-actions to opposite ends */
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    background-color: var(--bg-dark);
+    z-index: 900;
+    width: 100%;
+}
+
+/* NEW: Container for the right-side header actions (Crypto button and User dropdown) */
+.right-header-actions {
+    display: flex; /* Makes its children (crypto-wallet-display, user-account-dropdown) flex items */
+    align-items: center; /* Vertically aligns them in the middle */
+    gap: 15px; /* Adds space between them */
+}
+
+/* User Account Dropdown (Matching dashboard.css) */
+.user-account-dropdown {
+    position: relative;
+    z-index: 20;
+}
+
+.dropdown-toggle {
+    background: linear-gradient(to right, var(--button-gradient-start), var(--button-gradient-end));
+    color: var(--text-color);
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.dropdown-toggle i {
+    margin-right: 8px;
+    color: var(--accent-green);
+}
+
+.dropdown-toggle:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-green);
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    overflow: hidden; /* Ensure content within dropdown is clipped if it overflows */
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.account-balance {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-green);
+    font-weight: bold;
+}
+
+.top-up-button,
+.logout-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.top-up-button {
+    background-color: var(--accent-green);
+    color: var(--bg-dark);
+}
+
+.top-up-button:hover {
+    background-color: #609d00;
+}
+
+.logout-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+/* Modal Styling (Matching dashboard.css) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #2D3035; /* Specific color from dashboard.css */
+    margin: auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    position: relative;
+    color: #E0E0E0;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close-button {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    color: #fff; /* Specific color from dashboard.css */
+    margin-bottom: 20px;
+    font-family: var(--font-heading); /* Ensure font is Orbitron */
+}
+
+.modal-content .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.modal-content input[type="number"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #555;
+    background-color: #1A1D20;
+    color: #E0E0E0;
+    border-radius: 4px;
+}
+
+.modal-content button {
+    background-color: #00B140; /* NVIDIA green from dashboard.css */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.modal-content button:hover {
+    background-color: #008f33;
+}
+
+.modal-message {
+    margin-top: 15px;
+    font-weight: bold;
+}
+.modal-message.success { color: green; }
+.modal-message.error { color: red; }
+.modal-message.info { color: #007bff; }
+
+/* --- Hero Section - Specific Styling --- */
+.dashboard-widget.hero {
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0;
+    border-radius: 8px;
+    margin-bottom: 50px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible; /* Crucial for glow not to be clipped by hero widget */
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Set a specific max-width to control the overall widget size for the homepage */
+    max-width: 1300px; /* This makes the entire hero widget narrower, like an ad */
+    width: 100%; /* Ensure it takes full available width up to max-width */
+    margin-left: auto;
+    margin-right: auto; /* Center the widget horizontally */
+}
+
+.hero-content-wrapper {
+    width: 200%; /* This is a very suspicious value. Should likely be 100% */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; /* Padding inside the hero widget, around h1 and slideshow */
+    box-sizing: border-box;
+    background-color: transparent;
+}
+
+/* The box around SUGALHEROES text - Should now be correctly displayed */
+.dashboard-widget.hero h1 {
+    font-family: var(--font-heading);
+    font-size: 2.5em; /* Keeping this size as you liked it, adjust padding and shadow to fit */
+    padding: 22px 30px; /* Increased padding significantly to accommodate glow */
+    margin-top: 10px;
+    color: var(--accent-green);
+    text-shadow: 0 0 15px rgba(118, 185, 0, 1.0), /* Stronger glow */
+                 0 0 25px rgba(118, 185, 0, 0.7); /* Second layer of glow */
+    text-align: center;
+    background-color: var(--bg-medium);
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(118, 185, 0, 0.7), /* Very strong outer glow */
+                inset 0 0 20px rgba(118, 185, 0, 0.5); /* Stronger inner glow */
+    border: 1px solid rgba(118, 185, 0, 0.9); /* Very visible green border */
+    width: auto; /* Allow auto width to expand to content + padding */
+    min-width: 320px; /* Ensure sufficient min-width for the text box */
+    max-width: calc(100% - 60px); /* Account for wrapper padding (2*30px on side) */
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.2; /* Ensure sufficient line height */
+    text-transform: uppercase;
+    min-height: 1.5em; /* Ensures base height */
+    display: block; /* Ensure it renders as a block */
+}
+
+
+/* --- Slideshow Container --- */
+.slideshow-container {
+    /* Re-introduce max-width, set to a value > 800px but <= 1300px, or a percentage */
+    max-width: 1000px; /* NEW/MODIFIED: Set your desired maximum width here. Try 1200px, or even 1000px, etc. */
+    /* You could also try: width: 90%; if you want it to be a percentage of the hero widget */
+    
+    position: relative;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden; /* Important for slideshow images to stay within bounds */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 100%; /* Ensures it takes up to max-width and is responsive below that */
+    
+    /* Keep the fixed height you determined previously */
+    height: 450px; /* Use the exact fixed height you determined for your slideshow */
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+.mySlides {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.mySlides img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill; /* This is the key property! */
+    display: block;
+    border-radius: 8px;
+}
+
+/* --- Navigation Arrows --- */
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.prev {
+    left: 0; /* ADDED: Position the 'prev' button at the very left edge */
+    border-radius: 0 3px 3px 0; /* Keep consistent with default */
+}
+
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* --- Fade animation --- */
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade {
+    from {opacity: .4}
+    to {opacity: 1}
+}
+
+/* --- Slide Button Styling (inside slideshow) --- */
+.slide-button {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-block;
+    background-color: #ffc107;
+    color: var(--bg-dark);
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family: var(--font-body);
+    font-size: 1.1em;
+    z-index: 5;
+    white-space: nowrap;
+}
+
+.slide-button:hover {
+    background-color: #e0a800;
+    transform: translateX(-50%) translateY(-2px);
+}
+
+/* Games Section (Aligned with dashboard.css widget styles) */
+.games {
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px; /* Padding for the entire widget content */
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    /* REMOVED: overflow: hidden; from .games to see if it's clipping content */
+    /* Let's try visible first to debug clipping, then can revert to hidden if content overflows on purpose */
+    overflow: visible; /* TEMPORARY: Set to visible to see if content was being clipped */
+    display: flex; /* Keep flex for overall structure */
+    flex-direction: column; /* Stack header and grid vertically */
+    
+    /* min-width is important here, keep it. */
+    min-width: 600px; /* This ensures the entire widget remains visible and usable. */
+}
+
+.games .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px; /* Space between header and grid */
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.games .header h2 {
+    font-family: var(--font-heading);
+    color: var(--accent-green);
+    margin: 0;
+    font-size: 1.8em;
+}
+
+.games .header .see-all {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-size: 1em;
+    transition: color 0.3s ease;
+}
+.games .header .see-all:hover {
+    color: lightblue;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+
+    /* TEMPORARY: Add a fixed height for debugging if grid isn't taking space */
+    /* If the grid appears with this, then the content itself or minmax is problematic */
+    /* height: 400px; */ /* COMMENTED OUT FOR NOW, but useful if other fixes don't work */
+    /* background-color: rgba(255, 0, 0, 0.2); */ /* TEMPORARY: Add a red background to see if the grid area is there */
+}
+
+.card {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    border-color: var(--accent-green);
+}
+
+.card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card .title {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text-color);
+    margin-top: 10px;
+    padding: 0 10px 10px;
+    width: 100%;
+    text-align: center;
+}
+
+
+
+/* --- NEW: Crypto Wallet Display Styling --- */
+.crypto-wallet-display {
+    display: flex; /* Keep flex for alignment */
+    flex-direction: column; /* Stack elements vertically */
+    align-items: flex-end; /* Align content to the right */
+    gap: 5px; /* Space between elements */
+    margin-right: 20px; /* Space from the user dropdown */
+    text-align: right; /* Align text inside to the right */
+    /* Add some padding to make the clickable area larger */
+    padding: 5px 10px; /* Added padding to the display container */
+    border-radius: 5px;
+    transition: background-color 0.3s ease; /* For hover effect */
+}
+
+/* Style the clickable balance text */
+#sugalCoinBalance {
+    color: var(--accent-green); /* Primary color for balance */
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer; /* Indicate it's clickable */
+    white-space: nowrap; /* Prevent text wrap */
+    /* Add a subtle underline or border on hover to make it more obvious it's clickable */
+    text-decoration: none; /* Remove default underline if it appears */
+}
+
+#sugalCoinBalance:hover {
+    color: #90d300; /* Slightly lighter green on hover */
+    /* Add a subtle background or underline */
+    text-decoration: underline; /* Add underline on hover */
+}
+
